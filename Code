@@ -1,4 +1,4 @@
-*/
+
 import processing.net.*;
 import processing.serial.*;
 
@@ -79,4 +79,3 @@ void draw(){
   fill(255);
   ellipse(350,550,5,5);//door handle
 }
-/*
