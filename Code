@@ -1,0 +1,82 @@
+*/
+import processing.net.*;
+import processing.serial.*;
+
+PImage img[] = new PImage[2];
+Server s;
+Client c;
+Serial p;
+boolean light = false;
+int windowColor = 204;
+int back = 1;//image change num, get from arduino using serial
+
+void setup(){
+  size(600,600);
+  img[0] = loadImage("day.jpg");//image setting
+  img[1] = loadImage("night.jpg");//image setting
+  
+  s = new Server(this, 1234);
+  p = new Serial(this,"COM12",9600);//need to check and chage
+}
+void draw(){
+  c = s.available();
+  if(c!=null){
+    String m=c.readString();
+    m = m.substring(m.length()-1);
+    if(m.equals("1")){ windowColor = 255; light=true; }
+    if(m.equals("0")){ windowColor = 204; light=false; }
+  }
+  if(p.available()>0){
+    String sh = p.readString();
+    int shine = int(sh.trim());
+    println(shine);
+    if(shine>920) back = 1;//day, need to check and change
+    else back = 0;//night
+  }
+  
+  image(img[back],0,0);
+  if(back==1) fill(255,255,0);
+  if(back==0) fill(255);
+  
+  stroke(255);
+  line(50,450,50,600);//Street lamp1
+  line(50,450,80,450);
+  rect(60,450,20,10);
+  
+  line(110,450,110,600);//Street lamp2
+  line(110,450,140,450);
+  rect(120,450,20,10);
+  
+  line(490,450,490,600);//Street lamp3
+  line(490,450,520,450);
+  rect(500,450,20,10);
+  
+  line(550,450,550,600);//Street lamp4
+  line(550,450,580,450);
+  rect(560,450,20,10);
+  
+  //house
+  noStroke();
+  fill(255,0,0);
+  triangle(300,450,200,500,400,500);//roof
+  
+  fill(204,153,102);
+  rect(200,500,200,100);//house body
+  
+  fill(windowColor);
+  rect(230,515,80,50);//window
+  stroke(0);
+  line(230,540,310,540);//window frame
+  line(270,515,270,565);//window frame
+  
+  if(light) { fill(255,255,0); }
+  if(!light) { fill(0); }
+  rect(247,515,45,5);//light
+  
+  noStroke();
+  fill(204,255,255);
+  rect(345,520,40,75);//door
+  fill(255);
+  ellipse(350,550,5,5);//door handle
+}
+/*
